@@ -7,25 +7,49 @@
  */
 
 /**
- * Autoloader function.
+ * Model autoloader.
+ * 
+ * @param string $model_name
  */
-function __autoload($class_name) {
-    $filename = preg_replace('/([a-z]+)([A-Z]+)/', '$1_$2', $class_name);
-    if (file_exists('classes/models/' . $filename . '.php')) {
-        require_once 'classes/models/' . $filename . '.php';
+function autoload_model($model_name) {
+    autoload_class($model_name, 'models');
+}
+
+/**
+ * Controller autoloader.
+ * 
+ * @param string $controller_name
+ */
+function autoload_controller($controller_name) {
+    autoload_class($controller_name, 'controllers');
+}
+
+/**
+ * Generic class autoloader.
+ * 
+ * @param string $class_name
+ */
+function autoload_class($class_name, $sub_directory = '') {
+    $directory = 'classes'.DIRECTORY_SEPARATOR;
+    $filename  = strtolower(preg_replace('/([a-z]+)([A-Z]+)/', '$1_$2', $class_name));
+    if (strlen($sub_directory) > 0) {
+        $directory.= $sub_directory.DIRECTORY_SEPARATOR;
     }
-    else if (file_exists('classes/controllers/' . $filename . '.php')) {
-        require_once 'classes/controllers/' . $filename . '.php';
-    }
-    else if (file_exists('classes/' . $filename . '.php')) {
-        require_once 'classes/' . $filename . '.php';
-    }
-    else {
-        // class does not exist; throw exception
+    if (file_exists($directory . $filename . '.php')) {
+        require_once $directory . $filename . '.php';
     }
 }
 
-// parse the incoming request
+/**
+ * Register autoloader functions.
+ */
+spl_autoload_register('autoload_model');
+spl_autoload_register('autoload_controller');
+spl_autoload_register('autoload_class');
+
+/**
+ * Parse the incoming request.
+ */
 $request = new Request();
 if (isset($_SERVER['PATH_INFO'])) {
     $request->url_elements = explode('/', trim($_SERVER['PATH_INFO'], '/'));
@@ -43,7 +67,9 @@ switch ($request->method) {
     break;
 }
 
-// route the request
+/**
+ * Route the request.
+ */
 if (!empty($request->url_elements)) {
     $controller_name = ucfirst($request->url_elements[0]) . 'Controller';
     if (class_exists($controller_name)) {
@@ -60,6 +86,8 @@ else {
     $response_str = 'Unknown request';
 }
 
-// send the response to the client
+/**
+ * Send the response to the client.
+ */
 $response_obj = Response::create($response_str, 'json');
 echo $response_obj->render();

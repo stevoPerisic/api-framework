@@ -16,11 +16,9 @@ class Response
     public static function create($data, $format)
     {
         switch ($format) {
-            case 'json':
-                $obj = new ResponseJson($data);
-            break;
+            case 'application/json':
             default:
-                // invalid format; throw exception
+                $obj = new ResponseJson($data);
             break;
         }
         return $obj;

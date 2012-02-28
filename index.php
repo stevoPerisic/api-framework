@@ -89,5 +89,5 @@ else {
 /**
  * Send the response to the client.
  */
-$response_obj = Response::create($response_str, 'json');
+$response_obj = Response::create($response_str, $_SERVER['HTTP_ACCEPT']);
 echo $response_obj->render();

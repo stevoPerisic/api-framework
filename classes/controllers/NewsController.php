@@ -5,7 +5,7 @@
  * @package api-framework
  * @author  Martin Bean <martin@martinbean.co.uk>
  */
-class NewsController extends Controller
+class NewsController extends AbstractController
 {
     /**
      * News file.

@@ -7,44 +7,28 @@
  */
 
 /**
- * Model autoloader.
- * 
- * @param string $model_name
- */
-function autoload_model($model_name) {
-    autoload_class($model_name, 'models');
-}
-
-/**
- * Controller autoloader.
- * 
- * @param string $controller_name
- */
-function autoload_controller($controller_name) {
-    autoload_class($controller_name, 'controllers');
-}
-
-/**
  * Generic class autoloader.
  * 
  * @param string $class_name
  */
-function autoload_class($class_name, $sub_directory = '') {
-    $directory = 'classes'.DIRECTORY_SEPARATOR;
-    $filename  = strtolower(preg_replace('/([a-z]+)([A-Z]+)/', '$1_$2', $class_name));
-    if (strlen($sub_directory) > 0) {
-        $directory.= $sub_directory.DIRECTORY_SEPARATOR;
-    }
-    if (file_exists($directory . $filename . '.php')) {
-        require_once $directory . $filename . '.php';
+function autoload_class($class_name) {
+    $directories = array(
+        'classes/',
+        'classes/controllers/',
+        'classes/models/'
+    );
+    foreach ($directories as $directory) {
+        $filename = $directory . $class_name . '.php';
+        if (is_file($filename)) {
+            require($filename);
+            break;
+        }
     }
 }
 
 /**
  * Register autoloader functions.
  */
-spl_autoload_register('autoload_model');
-spl_autoload_register('autoload_controller');
 spl_autoload_register('autoload_class');
 
 /**

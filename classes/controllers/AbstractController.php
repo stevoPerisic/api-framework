@@ -4,4 +4,4 @@
  * @author   Martin Bean <martin@martinbean.co.uk>
  * @abstract
  */
-abstract class Controller {}
+abstract class AbstractController {}
